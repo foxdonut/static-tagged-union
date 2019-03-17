@@ -4,7 +4,7 @@ export const TaggedUnion = cases => cases.reduce((result, cx) => {
 }, {})
 
 export const fold = handlers => cx => {
-  const match = handlers[cx && cx.case] || handlers['_']
+  const match = handlers[cx && cx.case] || handlers["_"]
   if (match) {
     return match(cx && cx.value)
   }
@@ -24,3 +24,12 @@ export const bimap = (fn, fy) => fold({
 
 export const bifold = (fn, fy) => fold({ N: fn, Y: fy })
 
+export const unless = fn => mb => fold({
+  N: value => Maybe.N(fn(value)),
+  Y: () => mb
+})(mb)
+
+export const contains = cx => list => {
+  const matches = list && list.filter(it => it.case === cx.case)
+  return (matches && matches.length > 0) ? Maybe.Y(matches[0].value) : Maybe.N()
+}

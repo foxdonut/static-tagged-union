@@ -1,4 +1,4 @@
-import { Maybe, TaggedUnion, fold, map, bimap, bifold } from "../src/index"
+import { Maybe, TaggedUnion, fold, map, bimap, bifold, contains, unless } from "../src/index"
 
 const Route = TaggedUnion(["Home", "Profile", "Login"])
 
@@ -126,6 +126,25 @@ export default {
       )(loaded),
       "data loaded"
     ]
+  },
+  contains: {
+    containsY: [
+      contains(Route.Profile())([Route.Home(), Route.Profile({ id: 42 })]),
+      { case: "Y", value: { id: 42 } }
+    ],
+    containsN: [
+      contains(Route.Profile())([Route.Home(), Route.Login({ id: 42 })]),
+      { case: "N", value: undefined }
+    ]
+  },
+  unless: {
+    unlessN: [
+      unless(() => "data loaded")(unloaded),
+      { case: "N", value: "data loaded" }
+    ],
+    unlessY: [
+      unless(({ data }) => `${data} loaded`)(loaded),
+      { case: "Y", value: { data: "data" } }
+    ]
   }
 }
-

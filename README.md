@@ -83,6 +83,9 @@ That is the core API. For convenience, there is also `Maybe`:
 - `map(fn)(maybeInstance)`
   - if `maybeInstance` is `N`, returns `maybeInstance`
   - if `maybeInstance` is `Y`, returns `Maybe.Y(fn(maybeInstance.value))`
+- `unless(fn)(maybeInstance)`
+  - if `maybeInstance` is `N`, returns `Maybe.N(fn(maybeInstance.value))`
+  - if `maybeInstance` is `Y`, returns `maybeInstance`
 - `bimap(fn, fy)`: shortcut for
 ```javascript
     fold({
@@ -90,6 +93,9 @@ That is the core API. For convenience, there is also `Maybe`:
       Y: value => Maybe.Y(fy(value))
     })
 ```
+- `contains(caseInstance)([caseInstance0, caseInstance1, ...])`
+  - if one of the caseInstances in the array is the same case as `caseInstance`, returns `Maybe.Y(value)`, where `value` is the value contained by the first match
+  - otherwise, returns `Maybe.N()`
 
 ## Usage
 
@@ -211,7 +217,7 @@ achieve the same with just `TaggedUnion` and `fold`.
 
 ## Credits
 
-Special thanks to [James Forbes](https://twitter.com/james_a_forbes) for 
+Special thanks to [James Forbes](https://twitter.com/james_a_forbes) for
 [static-sum-type](https://gitlab.com/JAForbes/static-sum-type) and
 [stags](https://www.npmjs.com/package/stags). Definitely check those out if you want static
 tagged unions with verifications for types and exhaustive case handling.
