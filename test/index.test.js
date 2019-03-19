@@ -31,10 +31,28 @@ const unloadedWithMessage = Maybe.N({ error: "timeout" })
 const loaded = Maybe.Y({ data: "data" })
 
 export default {
-  serialized: [
-    route2,
-    { case: "Profile", value: { id: 42 } }
-  ],
+  serialized: {
+    basic: [
+      route2,
+      { case: "Profile", value: { id: 42 } }
+    ],
+    alwaysValue: [
+      route1,
+      { case: "Home", value: {} }
+    ],
+    withFalse: [
+      Route.Home(false),
+      { case: "Home", value: false }
+    ],
+    withZero: [
+      Route.Home(0),
+      { case: "Home", value: 0 }
+    ],
+    withEmptyArray: [
+      Route.Home([]),
+      { case: "Home", value: [] }
+    ]
+  },
   fold: {
     basic: [
       fold1(route1),
@@ -92,7 +110,7 @@ export default {
     ],
     mapN: [
       map(({ data }) => `${data} loaded`)(unloaded),
-      { case: "N", value: undefined }
+      { case: "N", value: {} }
     ],
     mapY: [
       map(({ data }) => `${data} loaded`)(loaded),
@@ -134,7 +152,7 @@ export default {
     ],
     containsN: [
       contains(Route.Profile())([Route.Home(), Route.Login({ id: 42 })]),
-      { case: "N", value: undefined }
+      { case: "N", value: {} }
     ]
   },
   unless: {

@@ -1,5 +1,5 @@
 export const TaggedUnion = cases => cases.reduce((result, cx) => {
-  result[cx] = value => ({ case: cx, value })
+  result[cx] = value => ({ case: cx, value: value == null ? {} : value })
   return result
 }, {})
 
