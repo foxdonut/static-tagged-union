@@ -18,7 +18,7 @@ These types are similar and, in `static-tagged-union`, are combined into a singl
 
 - Maybe (N, Y)
 
-Just like general `TaggedUnion`s, `Maybe` instances can optionally contain a single value.
+Just like general `TaggedUnion`s, `Maybe` instances can optionally contain params.
 That goes for both `N` and `Y`. In that sense, `Maybe` is closer to `Either` and `Result`.
 
 `Maybe` is provided for convenience, since it is very common to have present/absent values,
@@ -78,23 +78,23 @@ are provided.
 
 That is the core API. For convenience, there is also `Maybe`:
 
-- `Maybe.N(value)`, `Maybe.Y(value)`
+- `Maybe.N(params)`, `Maybe.Y(params)`
 - `bifold(fn, fy)` -- shortcut for `fold({ N: fn, Y: fy })`
 - `map(fn)(maybeInstance)`
   - if `maybeInstance` is `N`, returns `maybeInstance`
-  - if `maybeInstance` is `Y`, returns `Maybe.Y(fn(maybeInstance.value))`
+  - if `maybeInstance` is `Y`, returns `Maybe.Y(fn(maybeInstance.params))`
 - `unless(fn)(maybeInstance)`
-  - if `maybeInstance` is `N`, returns `Maybe.N(fn(maybeInstance.value))`
+  - if `maybeInstance` is `N`, returns `Maybe.N(fn(maybeInstance.params))`
   - if `maybeInstance` is `Y`, returns `maybeInstance`
 - `bimap(fn, fy)`: shortcut for
 ```javascript
     fold({
-      N: value => Maybe.N(fn(value)),
-      Y: value => Maybe.Y(fy(value))
+      N: params => Maybe.N(fn(params)),
+      Y: params => Maybe.Y(fy(params))
     })
 ```
 - `contains(caseInstance)([caseInstance0, caseInstance1, ...])`
-  - if one of the caseInstances in the array is the same case as `caseInstance`, returns `Maybe.Y(value)`, where `value` is the value contained by the first match
+  - if one of the caseInstances in the array is the same case as `caseInstance`, returns `Maybe.Y(params)`, where `params` is the params contained by the first match
   - otherwise, returns `Maybe.N()`
 
 ## Usage
@@ -117,8 +117,8 @@ const route2 = Route.Profile({ id: 42 })
 ```
 
 For each case that you provided when creating the tagged union, you get a function that creates
-an instance. The function accepts a single optional argument that becomes the value stored in
-the instance. Each instance is a plain JavaScript object of the form `{ case: ..., value: ... }`
+an instance. The function accepts a single optional argument that becomes the params stored in
+the instance. Each instance is a plain JavaScript object of the form `{ id: ..., params: ... }`
 
 ### Use `fold` to handle cases:
 
@@ -174,7 +174,7 @@ let data = Loaded.N()
 data = Loaded.Y({ things: ... })
 ```
 
-As a shortcut to `fold({ N: () => ..., Y: value => ... })`, you can use `bifold`:
+As a shortcut to `fold({ N: () => ..., Y: params => ... })`, you can use `bifold`:
 
 ```javascript
 bifold(
@@ -183,7 +183,7 @@ bifold(
 )
 ```
 
-Note that `N` accepts a value as well. For example, you might use this for an error message.
+Note that `N` accepts params as well. For example, you might use this for an error message.
 
 `Maybe` can also be used to denote the presence or absence of a value, and provide a convenient
 way to operate on a value only if it is present. Use `map` for this:
@@ -197,7 +197,7 @@ bifold(
 )(upper)
 ```
 
-Finally, you can do something with the value in `N` and something with the value in `Y`
+Finally, you can do something with the params in `N` and something with the params in `Y`
 with `bimap`:
 
 ```javascript

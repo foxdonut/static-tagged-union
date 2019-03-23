@@ -18,7 +18,7 @@ const fold2 = fold({
 
 const fold3 = fold({
   Home: () => "Home",
-  _: value => `Unmatched ${value}`
+  _: params => `Unmatched ${params}`
 })
 
 const fold4 = fold({
@@ -34,23 +34,23 @@ export default {
   serialized: {
     basic: [
       route2,
-      { case: "Profile", value: { id: 42 } }
+      { id: "Profile", params: { id: 42 } }
     ],
-    alwaysValue: [
+    alwaysParams: [
       route1,
-      { case: "Home", value: {} }
+      { id: "Home", params: {} }
     ],
     withFalse: [
       Route.Home(false),
-      { case: "Home", value: false }
+      { id: "Home", params: false }
     ],
     withZero: [
       Route.Home(0),
-      { case: "Home", value: 0 }
+      { id: "Home", params: 0 }
     ],
     withEmptyArray: [
       Route.Home([]),
-      { case: "Home", value: [] }
+      { id: "Home", params: [] }
     ]
   },
   fold: {
@@ -58,11 +58,11 @@ export default {
       fold1(route1),
       "Home"
     ],
-    withValue: [
+    withParams: [
       fold1(route2),
       "Profile 42"
     ],
-    withJustFirstValue: [
+    withJustFirstParams: [
       fold2(route3),
       "Profile 45"
     ],
@@ -75,7 +75,7 @@ export default {
       "Unmatched 45"
     ],
     withSerialized: [
-      fold1({ "case": "Profile", "value": { "id": "24" } }),
+      fold1({ "id": "Profile", "params": { "id": "24" } }),
       "Profile 24"
     ],
     withNull: [
@@ -100,7 +100,7 @@ export default {
       fold({ N: () => "Nothing", Y: () => "Something" })(unloaded),
       "Nothing"
     ],
-    foldNWithValue: [
+    foldNWithParams: [
       fold({ N: ({ error }) => `Nothing: ${error}`, Y: () => "Something" })(unloadedWithMessage),
       "Nothing: timeout"
     ],
@@ -110,25 +110,25 @@ export default {
     ],
     mapN: [
       map(({ data }) => `${data} loaded`)(unloaded),
-      { case: "N", value: {} }
+      { id: "N", params: {} }
     ],
     mapY: [
       map(({ data }) => `${data} loaded`)(loaded),
-      { case: "Y", value: "data loaded" }
+      { id: "Y", params: "data loaded" }
     ],
     bimapN: [
       bimap(
         ({ error }) => `Not loaded: ${error}`,
         ({ data }) => `${data} loaded`
       )(unloadedWithMessage),
-      { case: "N", value: "Not loaded: timeout" }
+      { id: "N", params: "Not loaded: timeout" }
     ],
     bimapY: [
       bimap(
         ({ error }) => `Not loaded: ${error}`,
         ({ data }) => `${data} loaded`
       )(loaded),
-      { case: "Y", value: "data loaded" }
+      { id: "Y", params: "data loaded" }
     ],
     bifoldN: [
       bifold(
@@ -148,21 +148,21 @@ export default {
   contains: {
     containsY: [
       contains(Route.Profile())([Route.Home(), Route.Profile({ id: 42 })]),
-      { case: "Y", value: { id: 42 } }
+      { id: "Y", params: { id: 42 } }
     ],
     containsN: [
       contains(Route.Profile())([Route.Home(), Route.Login({ id: 42 })]),
-      { case: "N", value: {} }
+      { id: "N", params: {} }
     ]
   },
   unless: {
     unlessN: [
       unless(() => "data loaded")(unloaded),
-      { case: "N", value: "data loaded" }
+      { id: "N", params: "data loaded" }
     ],
     unlessY: [
       unless(({ data }) => `${data} loaded`)(loaded),
-      { case: "Y", value: { data: "data" } }
+      { id: "Y", params: { data: "data" } }
     ]
   }
 }

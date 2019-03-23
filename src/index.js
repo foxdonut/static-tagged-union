@@ -1,12 +1,12 @@
-export const TaggedUnion = cases => cases.reduce((result, cx) => {
-  result[cx] = value => ({ case: cx, value: value == null ? {} : value })
+export const TaggedUnion = cases => cases.reduce((result, id) => {
+  result[id] = params => ({ id, params: params == null ? {} : params })
   return result
 }, {})
 
 export const fold = handlers => cx => {
-  const match = handlers[cx && cx.case] || handlers["_"]
+  const match = handlers[cx && cx.id] || handlers["_"]
   if (match) {
-    return match(cx && cx.value)
+    return match(cx && cx.params)
   }
 }
 
@@ -14,22 +14,22 @@ export const Maybe = TaggedUnion(["N", "Y"])
 
 export const map = fn => mb => fold({
   N: () => mb,
-  Y: value => Maybe.Y(fn(value))
+  Y: params => Maybe.Y(fn(params))
 })(mb)
 
 export const bimap = (fn, fy) => fold({
-  N: value => Maybe.N(fn(value)),
-  Y: value => Maybe.Y(fy(value))
+  N: params => Maybe.N(fn(params)),
+  Y: params => Maybe.Y(fy(params))
 })
 
 export const bifold = (fn, fy) => fold({ N: fn, Y: fy })
 
 export const unless = fn => mb => fold({
-  N: value => Maybe.N(fn(value)),
+  N: params => Maybe.N(fn(params)),
   Y: () => mb
 })(mb)
 
 export const contains = cx => list => {
-  const matches = list && list.filter(it => it.case === cx.case)
-  return (matches && matches.length > 0) ? Maybe.Y(matches[0].value) : Maybe.N()
+  const matches = list && list.filter(it => it.id === cx.id)
+  return (matches && matches.length > 0) ? Maybe.Y(matches[0].params) : Maybe.N()
 }
