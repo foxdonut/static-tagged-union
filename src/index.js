@@ -8,6 +8,7 @@ export const fold = handlers => cx => {
   if (match) {
     return match(cx && cx.params)
   }
+  return null
 }
 
 export const Maybe = TaggedUnion(["N", "Y"])

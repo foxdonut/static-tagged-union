@@ -68,7 +68,7 @@ export default {
     ],
     withNoMatch: [
       fold1(route3),
-      undefined
+      null
     ],
     withDefault: [
       fold3(route3),
@@ -80,11 +80,11 @@ export default {
     ],
     withNull: [
       fold2(null),
-      undefined
+      null
     ],
     withUndefined: [
       fold2(undefined),
-      undefined
+      null
     ],
     withNullAndDefaultHandler: [
       fold4(null),
