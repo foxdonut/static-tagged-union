@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/foxdonut/static-tagged-union/issues"
   },
-  "homepage": "https://github.com/foxdonut/seview#readme",
+  "homepage": "https://github.com/foxdonut/static-tagged-union#readme",
   "devDependencies": {
     "buble": "^0.19.7",
     "eslint": "^5.15.3",
