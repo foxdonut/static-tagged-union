@@ -1,6 +1,6 @@
 {
   "name": "static-tagged-union",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Static Tagged Union",
   "main": "dist/static-tagged-union.js",
   "scripts": {
@@ -26,13 +26,13 @@
   },
   "homepage": "https://github.com/foxdonut/static-tagged-union#readme",
   "devDependencies": {
-    "buble": "^0.19.7",
-    "eslint": "^5.15.3",
-    "rollup": "^1.7.3",
-    "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-commonjs": "^9.2.2",
-    "rollup-plugin-node-resolve": "^4.0.1",
-    "rollup-plugin-uglify": "^6.0.2",
-    "tead": "^0.5.1"
+    "buble": "^0.20.0",
+    "eslint": "^6.8.0",
+    "rollup": "^2.2.0",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.4",
+    "tead": "^0.5.3"
   }
 }

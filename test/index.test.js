@@ -1,10 +1,11 @@
-import { Maybe, TaggedUnion, fold, map, bimap, bifold, contains, unless } from "../src/index"
+import { Maybe, TaggedUnion, fold, cases, map, bimap, bifold, contains, unless } from "../src/index"
 
-const Route = TaggedUnion(["Home", "Profile", "Login"])
+const Route = TaggedUnion(["Home", "Profile", "Login", "User"])
 
 const route1 = Route.Home()
 const route2 = Route.Profile({ id: 42 })
 const route3 = Route.Login(45, 48)
+const route4 = Route.User({ id: 43 })
 
 const fold1 = fold({
   Home: () => "Home",
@@ -23,6 +24,14 @@ const fold3 = fold({
 
 const fold4 = fold({
   Home: () => "Home",
+  _: () => "Not found"
+})
+
+const fold5 = fold(cases(["Login", "Profile"])(({ id }) => `User ${id}`))
+
+const fold6 = fold({
+  Home: () => "Home",
+  ...cases(["Profile", "User"])(({ id }) => `User ${id}`),
   _: () => "Not found"
 })
 
@@ -93,6 +102,18 @@ export default {
     withUndefinedAndDefaultHandler: [
       fold4(undefined),
       "Not found"
+    ],
+    withJustCases: [
+      fold5(route2),
+      "User 42"
+    ],
+    withCasesAndHome: [
+      fold6(route1),
+      "Home"
+    ],
+    withCasesAndUser: [
+      fold6(route4),
+      "User 43"
     ]
   },
   maybe: {

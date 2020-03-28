@@ -1,4 +1,4 @@
-export const TaggedUnion = cases => cases.reduce((result, id) => {
+export const TaggedUnion = tags => tags.reduce((result, id) => {
   result[id] = params => ({ id, params: params == null ? {} : params })
   return result
 }, {})
@@ -10,6 +10,11 @@ export const fold = handlers => cx => {
   }
   return null
 }
+
+export const cases = tags => handler => tags.reduce((result, tag) => {
+  result[tag] = handler
+  return result
+}, {})
 
 export const Maybe = TaggedUnion(["N", "Y"])
 

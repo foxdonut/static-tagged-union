@@ -75,6 +75,7 @@ are provided.
 
 - `TaggedUnion(listOfCases)`
 - `fold(handlerObject)(caseInstance)`
+- `cases(listOfCases)(handlerFunction)`
 
 That is the core API. For convenience, there is also `Maybe`:
 
@@ -151,6 +152,18 @@ fold({
 })(route2)
 
 // Returns "No match was found"
+```
+
+If you want to handle multiple cases in the same way, use `cases` for convenience:
+
+```javascript
+fold(cases(["Home", "About"])(() => "Result"))
+
+fold({
+  ...cases(["Home", "About"])(() => "Result"),
+  User: () => "User",
+  _: () => "No match found"
+})
 ```
 
 ### Use `Maybe` for convenience:
