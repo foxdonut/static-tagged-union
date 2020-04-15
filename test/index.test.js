@@ -1,4 +1,17 @@
-import { Maybe, TaggedUnion, fold, cases, map, bimap, bifold, contains, unless } from "../src/index"
+import {
+  Maybe,
+  TaggedUnion,
+  TaggedUnionChecked,
+  fold,
+  foldChecked,
+  foldStrict,
+  cases,
+  map,
+  bimap,
+  bifold,
+  contains,
+  unless
+} from "../src/index"
 
 const Route = TaggedUnion(["Home", "Profile", "Login", "User"])
 
@@ -34,6 +47,83 @@ const fold6 = fold({
   ...cases(["Profile", "User"])(({ id }) => `User ${id}`),
   _: () => "Not found"
 })
+
+const fold7 = fold(
+  { Home: () => "Home" },
+  cases(["Profile", "User"])(({ id }) => `User ${id}`),
+  { _: () => "Not found" }
+)
+
+const Data = TaggedUnionChecked("Data", ["None", "Loading", "Loaded"])
+const Other = TaggedUnionChecked("Other", ["One", "Two"])
+
+const foldChecked1 = foldChecked({
+  None: () => "No data loaded",
+  Loading: () => "Loading, please wait"
+})
+
+const foldChecked2 = foldChecked({
+  Nothing: () => "Nothing"
+})
+
+const invalidFoldChecked2 = () => {
+  try {
+    foldChecked2(Data.Loading())
+    return "should have thrown an error"
+  } catch (e) {
+    return e
+  }
+}
+
+const invalidFoldChecked3 = () => {
+  try {
+    foldChecked1(Other.One())
+    return "should have thrown an error"
+  } catch (e) {
+    return e
+  }
+}
+
+const foldStrict1 = foldStrict({
+  None: () => "No data loaded",
+  Loading: () => "Loading, please wait",
+  Loaded: () => "Data loaded"
+})
+
+const foldStrict2 = foldStrict({
+  Nothing: () => "Nothing"
+})
+
+const invalidFoldStrict2 = () => {
+  try {
+    foldStrict2(Data.Loading())
+    return "should have thrown an error"
+  } catch (e) {
+    return e
+  }
+}
+
+const invalidFoldStrict3 = () => {
+  try {
+    foldStrict1(Other.One())
+    return "should have thrown an error"
+  } catch (e) {
+    return e
+  }
+}
+
+const foldStrict4 = foldStrict({
+  Loading: () => "Loading, please wait",
+})
+
+const invalidFoldStrict4 = () => {
+  try {
+    foldStrict4(Data.Loading())
+    return "should have thrown an error"
+  } catch (e) {
+    return e
+  }
+}
 
 const unloaded = Maybe.N()
 const unloadedWithMessage = Maybe.N({ error: "timeout" })
@@ -114,6 +204,46 @@ export default {
     withCasesAndUser: [
       fold6(route4),
       "User 43"
+    ],
+    withMultipleCasesAndHome: [
+      fold7(route1),
+      "Home"
+    ],
+    withMultipleCasesAndUser: [
+      fold7(route4),
+      "User 43"
+    ]
+  },
+  foldChecked: {
+    successful: [
+      foldChecked1(Data.Loading()),
+      "Loading, please wait"
+    ],
+    invalidHandler: [
+      invalidFoldChecked2(),
+      "Invalid handler Nothing for Data None,Loading,Loaded"
+    ],
+    invalidCase: [
+      invalidFoldChecked3(),
+      "Invalid handler None for Other One,Two"
+    ]
+  },
+  foldStrict: {
+    successful: [
+      foldStrict1(Data.Loading()),
+      "Loading, please wait"
+    ],
+    invalidHandler: [
+      invalidFoldStrict2(),
+      "Invalid handler Nothing for Data None,Loading,Loaded"
+    ],
+    invalidCase: [
+      invalidFoldStrict3(),
+      "Invalid handler None for Other One,Two"
+    ],
+    incompleteHandler: [
+      invalidFoldStrict4(),
+      "Cases not handled for Data: None,Loaded"
     ]
   },
   maybe: {

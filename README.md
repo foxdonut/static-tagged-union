@@ -39,10 +39,10 @@ match any of the handlers that you have defined.
 
 All of the similar libraries that I looked at matched some, but not all, of those requirements:
 
+- [stags](https://npmjs.com/package/stags) (repo [here](https://gitlab.com/JAForbes/static-sum-type))
 - [daggy](https://github.com/fantasyland/daggy)
 - [@joakin/sum-types](https://github.com/joakin/sum-types)
 - [results](https://github.com/uniphil/results)
-- [stags](https://npmjs.com/package/stags) (repo [here](https://gitlab.com/JAForbes/static-sum-type))
 - [sum-types](https://github.com/geigerzaehler/sum-types)
 - [tagged-union](https://github.com/quadrupleslap/union-js#readme)
 - [union-type](https://github.com/paldepind/union-type)
@@ -50,9 +50,11 @@ All of the similar libraries that I looked at matched some, but not all, of thos
 I give credit to the libraries above. They are excellent work and definitely do more robust
 verifications of your code than what I provide here.
 
-You can consider `static-tagged-union` as a more lenient alternative that gives you more freedom to
-do whatever you want, at the cost of less verification of your code. There is no type checking,
-no exhaustive case handling checking, and no parameter validation.
+Although the initial version of `static-tagged-union` did no verifications, the current version
+provides **optional** checking that:
+
+- the case handlers match the case type (see `foldChecked`, below)
+- the case handlers match _all_ the cases of the case type (see `foldStrict`, below)
 
 ## Installation
 
@@ -76,6 +78,9 @@ are provided.
 - `TaggedUnion(listOfCases)`
 - `fold(handlerObject)(caseInstance)`
 - `cases(listOfCases)(handlerFunction)`
+- `TaggedUnionChecked(type, listOfCases)`
+- `foldChecked(handlerObject)(checkedCaseInstance)`
+- `foldStrict(handlerObject)(checkedCaseInstance)`
 
 That is the core API. For convenience, there is also `Maybe`:
 
@@ -166,6 +171,66 @@ fold({
 })
 ```
 
+Instead of `{...cases()}`, you can also pass multiple handler objects to `fold`:
+
+```javascript
+fold(
+  cases(["Home", "About"])(() => "Result"),
+  { User: () => "User",
+    _: () => "No match found"
+  }
+)
+```
+
+Credit: thank you [James Forbes](https://james-forbes.com) for this idea!
+
+### TaggedUnionChecked, foldChecked, and foldStrict
+
+The API so far does not do any verifications on cases and handlers. Optionally, you can ensure
+that:
+
+- the case handlers match the case type (see `foldChecked`, below)
+- the case handlers match _all_ the cases of the case type (see `foldStrict`, below)
+
+First, use `TaggedUnionChecked` to create the tagged union:
+
+```javascript
+const Route = TaggedUnionChecked(["Home", "Profile", "Login"])
+```
+
+Next, use `foldChecked` to make sure that your handlers match the case type:
+
+```javascript
+// This works fine:
+foldChecked({
+  Profile: ({ id }) => `Profile ${id}`
+})(Route.Profile({ id: 42 }))
+
+// This throws an error because `User` is not part of the cases for `Route`:
+foldChecked({
+  User: ({ id }) => `User ${id}`
+})(Route.Profile({ id: 42 }))
+```
+
+Finally, use `foldStrict` to make the same verifications as `foldChecked` **plus** requiring that
+the handler handles **all** the cases of the type. Note that `_` cannot be used here; instead, use
+`cases` to handle multiple cases.
+
+```javascript
+// This works fine:
+foldStrict({
+  Home: () => "Home",
+  Profile: ({ id }) => `Profile ${id}`,
+  Login: () => "Login"
+})(Route.Profile({ id: 42 }))
+
+// This throws an error because `Login` is not handled:
+foldStrict({
+  Home: () => "Home",
+  Profile: ({ id }) => `Profile ${id}`
+})(Route.Profile({ id: 42 }))
+```
+
 ### Use `Maybe` for convenience:
 
 Whenever you have a value that can be true/false, present/absent, and so on, you can use
@@ -242,4 +307,3 @@ explanation of why the `Maybe` type is so useful.
 
 _static-tagged-union is developed by [foxdonut](https://github.com/foxdonut)
 ([@foxdonut00](http://twitter.com/foxdonut00)) and is released under the MIT license._
-
