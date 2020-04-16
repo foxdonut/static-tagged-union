@@ -224,6 +224,12 @@ foldStrict({
   Login: () => "Login"
 })(Route.Profile({ id: 42 }))
 
+// This also works fine:
+foldStrict(
+  cases(["Home", "Login"])(() => "Page"),
+  { Profile: ({ id }) => `Profile ${id}` }
+)(Route.Profile({ id: 42 }))
+
 // This throws an error because `Login` is not handled:
 foldStrict({
   Home: () => "Home",
