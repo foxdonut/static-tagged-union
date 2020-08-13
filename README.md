@@ -39,7 +39,7 @@ match any of the handlers that you have defined.
 
 All of the similar libraries that I looked at matched some, but not all, of those requirements:
 
-- [stags](https://npmjs.com/package/stags) (repo [here](https://gitlab.com/JAForbes/static-sum-type))
+- [stags](https://npmjs.com/package/stags) (repo [here](https://gitlab.com/harth/stags))
 - [daggy](https://github.com/fantasyland/daggy)
 - [@joakin/sum-types](https://github.com/joakin/sum-types)
 - [results](https://github.com/uniphil/results)
