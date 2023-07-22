@@ -1,7 +1,7 @@
 .eslintrc.js
 .gitignore
 .vscode
-rollup.config.js
-test
+rollup.config.mjs
+tests
 LICENSE
 README.md
